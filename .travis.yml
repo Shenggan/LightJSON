@@ -1,0 +1,8 @@
+sudo: required
+
+language: cpp
+compiler: gcc
+
+script:
+  - bash ./scripts/build.sh
+  - bash ./scripts/test.sh

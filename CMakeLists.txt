@@ -60,7 +60,7 @@ if (test)
   ##############
   # Unit Tests
   ##############
-  add_executable(UnitTests ljson_test.cc)
+  add_executable(UnitTests tests/ljson_test.cc)
 
   # Standard linking to gtest stuff.
   target_link_libraries(UnitTests gtest gtest_main)
