@@ -1,3 +1,9 @@
+/*!
+ * \file lightjson.cc
+ * \brief The cc file of LightJSON.
+ * \author Shenggan
+ */
+
 #include <cassert>
 #include <cerrno>
 #include <cmath>

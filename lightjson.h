@@ -20,15 +20,15 @@ typedef enum { LJSON_NULL, LJSON_FALSE, LJSON_TRUE, LJSON_NUMBER, LJSON_STRING, 
 typedef struct ljson_value ljson_value;
 typedef struct ljson_member ljson_member;
 
-/*! \brief the intern struct of a json, can present all kind of ljson_type*/
+/*! \brief the inner struct of a json, can present all kind of ljson_type*/
 struct ljson_value {
-    union {
-        std::vector<ljson_member> * mobject;
-        std::string * mstring;                  /* string */
-        std::vector<ljson_value> * marray;      /* array */
-        double mdouble;                         /* number */
-    } data;
-    ljson_type type;
+    union __data {
+        std::vector<ljson_member> * mobject;    /*!< object */
+        std::string * mstring;                  /*!< string */
+        std::vector<ljson_value> * marray;      /*!< array */
+        double mdouble;                         /*!< number */
+    } data;                         /*!< data part of ljson_value */
+    ljson_type type;                /*!< typr of this ljson_value */
 };
 
 /*! \brief the struct of the member of json object*/
@@ -70,7 +70,6 @@ typedef enum {
 /*!
  * \brief initailize a ljson_value, use it after declaration
  * \param v the pointer of ljson_value you want to initailize
- * \return void
  */
 inline void ljson_init(ljson_value* v) { v->type = LJSON_NULL; }
 
@@ -78,7 +77,6 @@ inline void ljson_init(ljson_value* v) { v->type = LJSON_NULL; }
  * \brief free the memory of a ljson_value, 
  *          use it if you will not use it or initailize it again
  * \param v the pointer of ljson_value you want to free
- * \return void
  */
 void ljson_free(ljson_value* v);
 /*!

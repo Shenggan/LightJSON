@@ -1,7 +1,7 @@
 APIs
-====
+========
 
 lightjson.h
-________
+______________
 
 .. doxygenfile:: lightjson.h

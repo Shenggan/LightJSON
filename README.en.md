@@ -3,15 +3,13 @@
 [![Build Status](https://travis-ci.com/Shenggan/LightJSON.svg?token=eMRNqxQT1YuqVS1nXpE5&branch=master)](https://travis-ci.com/Shenggan/LightJSON)
 ![Release version](https://img.shields.io/badge/release-v0.1.0-blue.svg)
 
-[English README](./README.en.md)
+### Overview
 
-### 概览
+LightJSON is a lightweight and modern Json C++ library。
 
-LightJSON是一个轻量级的Json C++库。
+### Usage
 
-### 使用
-
-下面是LightJSON的使用方法，更具体的例子请参见：[example/example.cc](example/example.cc)
+A example of the usage of the LightJSON is in [example/example.cc](example/example.cc)
 
 ```cpp
 #include <iostream>
@@ -28,14 +26,14 @@ int main() {
 	std::string str2;
 	ljson_stringify(&v, str2);
 	std::cout << str2 << std::endl;
-	
+
 	ljson_free(&v);
 	return 0;
 }
 
 ```
 
-### 编译安装
+### Build and Install
 
 The build of the LightJSON need cmake.
 
