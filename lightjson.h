@@ -1,3 +1,10 @@
+/*!
+ * \file lightjson.h
+ * \brief The head file of LightJSON.
+ * \author Shenggan
+ */
+
+
 #ifndef LIGHTJSON_H__
 #define LIGHTJSON_H__
 
@@ -7,11 +14,13 @@
 
 namespace ljson {
 
+/*! \brief the basic type of the json struct*/
 typedef enum { LJSON_NULL, LJSON_FALSE, LJSON_TRUE, LJSON_NUMBER, LJSON_STRING, LJSON_ARRAY, LJSON_OBJECT } ljson_type;
 
 typedef struct ljson_value ljson_value;
 typedef struct ljson_member ljson_member;
 
+/*! \brief the intern struct of a json, can present all kind of ljson_type*/
 struct ljson_value {
     union {
         std::vector<ljson_member> * mobject;
@@ -22,16 +31,19 @@ struct ljson_value {
     ljson_type type;
 };
 
+/*! \brief the struct of the member of json object*/
 struct ljson_member {
     std::string key;
     ljson_value value;
 };
 
+/*! \brief the struct of the json object*/
 typedef struct {
     char* name;
     ljson_value value;
 } ljson_object;
 
+/*! \brief the type of the results or error*/
 typedef enum {
     LJSON_PARSE_OK = 0,
     LJSON_STRINGIFY_OK,
@@ -55,15 +67,53 @@ typedef enum {
     LJSON_PARSE_MISS_COMMA_OR_CURLY_BRACKET
 } ljson_state;
 
+/*!
+ * \brief initailize a ljson_value, use it after declaration
+ * \param v the pointer of ljson_value you want to initailize
+ * \return void
+ */
 inline void ljson_init(ljson_value* v) { v->type = LJSON_NULL; }
 
+/*!
+ * \brief free the memory of a ljson_value, 
+ *          use it if you will not use it or initailize it again
+ * \param v the pointer of ljson_value you want to free
+ * \return void
+ */
 void ljson_free(ljson_value* v);
-#define ljson_set_null(v) ljson_free(v);
+/*!
+ * \brief the same as ljson_free(ljson_value* v)
+ */
+inline void ljson_set_null(ljson_value* v) { ljson_free(v); }
 
+/*!
+ * \brief parse a string to get the ljson_value
+ * \param v the pointer of ljson_value you want to store the result of parse
+ * \param json the string you want to parse
+ * \return ljson_state
+ */
 int ljson_parse(ljson_value* v, const char* json);
+/*!
+ * \brief parse a string to get the ljson_value
+ * \param v the pointer of ljson_value you want to store the result of parse
+ * \param json the string you want to parse
+ * \return ljson_state
+ */
 int ljson_parse(ljson_value* v, const std::string & json);
 
+/*!
+ * \brief ljson_value v to get the string os the json
+ * \param v the pointer of ljson_value you want to stringify
+ * \param json the string you want to store the result
+ * \return ljson_state
+ */
 int ljson_stringify(const ljson_value* v, std::string & json);
+/*!
+ * \brief ljson_value v to get the string os the json
+ * \param v the pointer of ljson_value you want to stringify
+ * \param json the string you want to store the result
+ * \return ljson_state
+ */
 int ljson_stringify(const ljson_value* v, char* json);
 
 
