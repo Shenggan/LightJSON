@@ -1,11 +1,24 @@
 # LightJSON: A Lightweight JSON CPP Library
 
 [![Build Status](https://travis-ci.com/Shenggan/LightJSON.svg?token=eMRNqxQT1YuqVS1nXpE5&branch=master)](https://travis-ci.com/Shenggan/LightJSON)
+[![Documentation Status](https://readthedocs.org/projects/LightJSON/badge/?version=latest)](http://example-cpp.readthedocs.io/en/latest/?badge=latest)
 ![Release version](https://img.shields.io/badge/release-v0.1.0-blue.svg)
 
 ### Overview
 
 LightJSON is a lightweight and modern Json C++ library。
+
+The function:
+
+* parse json string
+* accese the edit json content
+* generate json string
+
+The highlight featrue:
+
+* small but complete
+* using many new feature in C++11
+* use googletest for unit test
 
 ### Usage
 
