@@ -3,7 +3,7 @@
 #include <string>
 #include <cassert>
 #include <streambuf>
-#include "../lightjson.h"
+#include "lightjson.h"
 
 int main() {
 	ljson::ljson_value v;
