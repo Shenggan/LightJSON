@@ -13,4 +13,6 @@ The highlight featrue:
 * small but complete
 * using many new feature in C++11
 * use googletest for unit test
-
+* LightJSON provide two style APIs 
+	* Class Style API
+	* C Style API

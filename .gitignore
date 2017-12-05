@@ -1,5 +1,5 @@
 build/*
 .vscode/*
-
+example/build/*
 docs/build/*
 docs/doxygen/*

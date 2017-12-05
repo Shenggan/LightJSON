@@ -19,10 +19,13 @@ The highlight featrue:
 * small but complete
 * using many new feature in C++11
 * use googletest for unit test
+* LightJSON provide two style APIs 
+	* Class Style API
+	* C Style API
 
 ### Usage
 
-A example of the usage of the LightJSON is in [example/example.cc](example/example.cc)
+A example of the usage of the class style api in LightJSON is in [example/](example/) and [docs](http://lightjson.readthedocs.io/en/latest/usage.html)
 
 ```cpp
 #include <iostream>

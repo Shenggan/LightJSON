@@ -39,7 +39,7 @@ void ljson_free(ljson_value* v) {
         case LJSON_OBJECT:
             assert(v->data.mobject != nullptr);
             for (auto iter = (v->data.mobject)->begin(); iter != (v->data.mobject)->end(); iter++)
-                ljson_free(&(*iter).value);
+                ljson_free(&(*iter).second);
             delete v->data.mobject;
             break;
         default:
@@ -47,6 +47,8 @@ void ljson_free(ljson_value* v) {
     }
     v->type = LJSON_NULL;
 }
+
+inline void ljson_init(ljson_value* v) { v->type = LJSON_NULL; }
 
 inline void expect_char(ljson_context* c, char ch) { 
     assert(*c->json == (ch));
@@ -199,7 +201,7 @@ static int ljson_parse_string(ljson_context* c, ljson_value* v) {
     int ret;
     std::string cache_string;
     if ((ret = ljson_parse_string_raw(c, cache_string)) == LJSON_PARSE_OK)
-        ljson_set_string(v, cache_string);
+        setString(v, cache_string);
     return ret;
 }
 
@@ -228,7 +230,7 @@ static int ljson_parse_array(ljson_context* c, ljson_value* v) {
         }
         else if (*c->json == ']') {
             c->json++;
-            ljson_set_array(v, vec);
+            setArray(v, vec, 0);
             return LJSON_PARSE_OK;
         } 
         else{
@@ -244,12 +246,12 @@ static int ljson_parse_array(ljson_context* c, ljson_value* v) {
 static int ljson_parse_object(ljson_context* c, ljson_value* v ) {
     expect_char(c, '{');
     int ret;
-    std::vector<ljson_member> m_vec;
+    std::map<std::string, ljson_value> m_map;
     ljson_parse_whitespace(c);
     if (*c->json == '}') {
         c->json++;
         v->type = LJSON_OBJECT;
-        v->data.mobject = new std::vector<ljson_member>;
+        v->data.mobject = new std::map<std::string, ljson_value>;
         return LJSON_PARSE_OK;
     }
     for (;;) {
@@ -270,7 +272,7 @@ static int ljson_parse_object(ljson_context* c, ljson_value* v ) {
         ljson_parse_whitespace(c);
         if ((ret = ljson_parse_value(c, &m.value)) != LJSON_PARSE_OK)
             break;
-        m_vec.push_back(m);
+        m_map[m.key] = m.value;
 
         ljson_parse_whitespace(c);
         if (*c->json == ',') {
@@ -278,7 +280,7 @@ static int ljson_parse_object(ljson_context* c, ljson_value* v ) {
             ljson_parse_whitespace(c);
         } else if (*c->json == '}') {
             c->json++;
-            ljson_set_object(v, m_vec);
+            setObject(v, m_map, 0);
             return LJSON_PARSE_OK;
         } else {
             ret = LJSON_PARSE_MISS_COMMA_OR_CURLY_BRACKET;
@@ -286,8 +288,8 @@ static int ljson_parse_object(ljson_context* c, ljson_value* v ) {
         }
 
     }
-    for (auto iter = m_vec.begin(); iter != m_vec.end(); iter++)
-        ljson_free(&(*iter).value);
+    for (auto iter = m_map.begin(); iter != m_map.end(); iter++)
+        ljson_free(&(*iter).second);
     v->type = LJSON_NULL;
     return ret;
 }
@@ -325,7 +327,7 @@ int ljson_parse(ljson_value* v, const std::string & json) {
     return ljson_parse(v, json.c_str());
 }
 
-static void ljson_stringify_string(std::string & str, std::string & json_str) {
+static void ljson_stringify_string(std::string & str, const std::string & json_str) {
     static const char hex_digits[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
     str += '"';
     for (auto iter = json_str.begin(); iter != json_str.end(); iter++) {
@@ -378,9 +380,9 @@ static int ljson_stringify_value(const ljson_value* v, std::string & str) {
             for (auto iter = v->data.mobject->begin(); iter != v->data.mobject->end(); iter++) {
                 if (iter != v->data.mobject->begin())
                     str += ',';
-                ljson_stringify_string(str, (*iter).key);
+                ljson_stringify_string(str, (*iter).first);
                 str += ':';
-                ljson_stringify_value(&(*iter).value, str);
+                ljson_stringify_value(&(*iter).second, str);
             }
             str += '}';
             break;
@@ -405,33 +407,51 @@ int ljson_stringify(const ljson_value* v, char* json) {
     return ljson_stringify(v, str);
 }
 
-ljson_type ljson_get_type(const ljson_value* v) {
+void ljson_reset(ljson_value* v_old, const ljson_value & v_new) {
+    v_old->copyfrom(v_new);
+}
+void ljson_reset(ljson_value* v_old, const ljson_value * v_new) {
+    ljson_reset(v_old, *v_new);
+}
+
+ljson_type getType(const ljson_value* v) {
     assert(v != nullptr);
     return v->type;
 }
+ljson_type getType(const ljson_value & v) { return getType(&v); }
 
-void ljson_set_number(ljson_value* v, double n) {
+void setNumber(ljson_value* v, double n) {
     ljson_free(v);
     v->data.mdouble = n;
     v->type = LJSON_NUMBER;
 }
+void setNumber(ljson_value & v, double n) { return setNumber(&v, n); }
 
-double ljson_get_number(const ljson_value* v) {
+double getNumber(const ljson_value* v) {
     assert(v != nullptr && v->type == LJSON_NUMBER);
     return v->data.mdouble;
 }
+double getNumber(const ljson_value & v) { return getNumber(&v); };
 
-void ljson_set_boolean(ljson_value* v, int b) {
+void setBool(ljson_value* v, ljson_type b) {
+    ljson_free(v);
+    v->type = b;
+}
+void setBool(ljson_value & v, ljson_type b) { setBool(&v, b); }
+
+void setBool(ljson_value* v, bool b) {
     ljson_free(v);
     v->type = b ? LJSON_TRUE : LJSON_FALSE;
 }
+void setBool(ljson_value & v, bool b) { setBool(&v, b); }
 
-int ljson_get_boolean(const ljson_value* v) {
+bool getBool(const ljson_value* v) {
     assert(v != nullptr && (v->type == LJSON_TRUE || v->type == LJSON_FALSE));
     return v->type == LJSON_TRUE;
 }
+bool getBool(const ljson_value & v) { return getBool(&v); }
 
-void ljson_set_string(ljson_value* v, const char* s, size_t len) {
+void setString(ljson_value* v, const char* s, size_t len) {
     assert(v != nullptr && (s != nullptr || len == 0));
     ljson_free(v);
     v->data.mstring = new std::string();
@@ -439,70 +459,128 @@ void ljson_set_string(ljson_value* v, const char* s, size_t len) {
     v->type = LJSON_STRING;
 }
 
-void ljson_set_string(ljson_value* v, const std::string & s) {
+void setString(ljson_value* v, const std::string & s) {
     assert(v != nullptr);
+    assert(&s != v->data.mstring);
     ljson_free(v);
     v->data.mstring = new std::string();
     v->data.mstring->assign(s);
     v->type = LJSON_STRING;
 }
 
-const char* ljson_get_string(const ljson_value* v) {
+std::string & getString(const ljson_value* v) {
     assert(v != nullptr && v->type == LJSON_STRING);
-    return v->data.mstring->c_str();
+    return *(v->data.mstring);
 }
 
-size_t ljson_get_string_length(const ljson_value* v){
+size_t getStringLength(const ljson_value* v){
     assert(v != nullptr && v->type == LJSON_STRING);
     return v->data.mstring->length();
 }
 
-void ljson_set_array(ljson_value* v, std::vector<ljson_value> & vec) {
+void setString(ljson_value & v, const char* s, size_t len) { setString(&v, s, len); }
+void setString(ljson_value & v, const std::string & s) { setString(&v, s); }
+std::string & getString(const ljson_value & v) { return getString(&v); }
+size_t getStringLength(const ljson_value& v) { return getStringLength(&v); };
+
+
+
+void setArray(ljson_value* v, const std::vector<ljson_value> & vec, bool deep_copy) {
     assert(v != nullptr);
     ljson_free(v);
-    v->data.marray = new std::vector<ljson_value>(vec);
+    v->data.marray = new std::vector<ljson_value>;
     v->type = LJSON_ARRAY;
+    if (!deep_copy)
+        v->data.marray->assign(vec.begin(), vec.end());
+    else {
+        size_t sz = vec.size();
+        v->data.marray = new std::vector<ljson_value>(sz);
+        for (size_t i = 0; i < sz; i++) {
+            ljson_init(&(*v->data.marray)[i]);
+            ljson_reset(&((*v->data.marray)[i]), vec[i]);
+        }
+    }
+} 
+
+std::vector<ljson_value> & getArray(const ljson_value* v) {
+    assert(v != nullptr && v->type == LJSON_ARRAY);
+    return *(v->data.marray);
 }
 
-ljson_value* ljson_get_array_element(const ljson_value* v, size_t index){
+void setArrayElement(ljson_value* v, size_t index, const ljson_value & content) {
     assert(v != nullptr && v->type == LJSON_ARRAY);
     assert(index < v->data.marray->size());
-    return &((*v->data.marray)[index]);
+    ljson_reset(&((*v->data.marray)[index]), content);
 }
 
-size_t ljson_get_array_size(const ljson_value* v) {
+ljson_value & getArrayElement(const ljson_value* v, size_t index){
+    assert(v != nullptr && v->type == LJSON_ARRAY);
+    assert(index < v->data.marray->size());
+    return (*v->data.marray)[index];
+}
+
+size_t getArraySize(const ljson_value* v) {
     assert(v != nullptr && v->type == LJSON_ARRAY);
     return v->data.marray->size();
 }
 
-size_t ljson_get_object_size(const ljson_value* v) {
+void setArray(ljson_value & v, const std::vector<ljson_value> & vec, bool deep_copy) { setArray(v, vec, deep_copy); }
+std::vector<ljson_value> & getArray(const ljson_value& v) { return getArray(v); }
+ljson_value & getArrayElement(const ljson_value & v, const size_t index) { return getArrayElement(&v, index); }
+void setArrayElement(ljson_value & v, const size_t index, const ljson_value & content) { setArrayElement(&v, index, content); }
+size_t getArraySize(const ljson_value & v) { return getArraySize(&v); }
+
+
+void setObject(ljson_value* v, const std::map<std::string, ljson_value> & vec, bool deep_copy) {
+    assert(v != nullptr);
+    ljson_free(v);
+    v->data.mobject = new std::map<std::string, ljson_value>;
+    v->type = LJSON_OBJECT;
+    if (!deep_copy) 
+        v->data.mobject->insert(vec.begin(), vec.end());
+    else
+        for (auto iter = vec.begin(); iter != vec.end(); iter++) {
+            ljson_init(&(*v->data.mobject)[iter->first]);
+            ljson_reset(&(*v->data.mobject)[iter->first], iter->second);
+        }
+}
+
+size_t getObjectSize(const ljson_value* v) {
     assert(v != nullptr && v->type == LJSON_OBJECT);
     return v->data.mobject->size();
 }
 
-void ljson_set_object(ljson_value* v, std::vector<ljson_member> & vec) {
-    assert(v != nullptr);
-    ljson_free(v);
-    v->data.mobject = new std::vector<ljson_member>(vec);
-    v->type = LJSON_OBJECT;
+bool objectFindKey(const ljson_value* v, const std::string & mkey) {
+    return v->data.mobject->find(mkey) != v->data.mobject->end();
 }
 
-const char* ljson_get_object_key(const ljson_value* v, size_t index) {
+ljson_value & getObjElement(const ljson_value* v, const std::string & key) {
     assert(v != nullptr && v->type == LJSON_OBJECT);
-    assert(index < v->data.mobject->size());
-    return (*v->data.mobject)[index].key.c_str();
+    assert(objectFindKey(v, key));
+    return (*v->data.mobject)[key];
+}
+void setObjElement(ljson_value* v, const std::string key, const ljson_value & content) {
+    assert(v != nullptr && v->type == LJSON_OBJECT);
+    assert(objectFindKey(v, key));
+    ljson_reset(&((*v->data.mobject)[key]), content);
 }
 
-size_t ljson_get_object_key_length(const ljson_value* v, size_t index) {
+std::map<std::string, ljson_value> & getObject(const ljson_value* v) {
     assert(v != nullptr && v->type == LJSON_OBJECT);
-    assert(index < v->data.mobject->size());
-    return (*v->data.mobject)[index].key.length();
+    return *(v->data.mobject);
 }
 
-ljson_value* ljson_get_object_value(const ljson_value* v, size_t index) {
-    assert(v != nullptr && v->type == LJSON_OBJECT);
-    assert(index < v->data.mobject->size());
-    return &((*v->data.mobject)[index].value);
+ljson_value & objectAccess(ljson_value* v, const std::string & mkey) {
+    assert(objectFindKey(v, mkey));
+    return (*v->data.mobject)[mkey];
 }
+
+void setObject(ljson_value & v, const std::map<std::string, ljson_value> & vec, bool deep_copy) { setObject(&v, vec, deep_copy); }
+bool objectFindKey(const ljson_value & v, const std::string & mkey) { return objectFindKey(&v, mkey); }
+std::map<std::string, ljson_value> & getObject(const ljson_value & v) { return getObject(&v); }
+ljson_value & getObjElement(const ljson_value & v, const std::string key) { return getObjElement(&v, key); }
+void setObjElement(ljson_value & v, const std::string key, const ljson_value & content) { setObjElement(&v, key, content); }
+size_t getObjectSize(const ljson_value & v) { return getObjectSize(&v); }
+ljson_value & objectAccess(ljson_value & v, const std::string & mkey) { return objectAccess(v, mkey); }
 
 }   /*namespace ljson*/

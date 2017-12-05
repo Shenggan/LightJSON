@@ -12,25 +12,27 @@ LightJSON是一个轻量级的Json C++库。
 
 ### 使用
 
-下面是LightJSON的使用方法，更具体的例子请参见：[example/example.cc](example/example.cc)
+下面是LightJSON的使用方法，LightJSON向用户提供两种风格的API接口，以下为Class Style API。另一种API和具体的例子请参见：[example](example/)或[文档](http://lightjson.readthedocs.io/en/latest/usage.html)。
 
 ```cpp
+// Class Style API
 #include <iostream>
 #include <string>
 #include "lightjson.h"
 
 int main() {
-	ljson::ljson_value v;
-	ljson_init(&v);
+	ljson::Document js;
 
 	std::string str("{ \"1\" : 1 }");
-	ljson_parse(&v, str);
+	js.Parse(str);
+
+	ljson::Value v = js["1"];
+	v.SetNumber(v.GetNumber() + 1);
 
 	std::string str2;
 	ljson_stringify(&v, str2);
-	std::cout << str2 << std::endl;
-	
-	ljson_free(&v);
+	std::cout << js << std::endl;
+
 	return 0;
 }
 ```
