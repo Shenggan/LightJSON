@@ -38,6 +38,12 @@ endif()
 ################################
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_library(lightjson lightjson.cc)
+
+add_executable(c_style example/c_style.cc)
+target_link_libraries(c_style lightjson)
+
+add_executable(class_style example/class_style.cc)
+target_link_libraries(class_style lightjson)
 # Key idea: SEPARATE OUT your main() function into its own file so it can be its
 # own executable. Separating out main() means you can add this library to be
 # used elsewhere.

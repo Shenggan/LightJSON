@@ -3,3 +3,4 @@ build/*
 example/build/*
 docs/build/*
 docs/doxygen/*
+output.json
