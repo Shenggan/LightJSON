@@ -8,4 +8,4 @@ script:
 
 after_success:
   - pip install --user cpp-coveralls
-  - coveralls -r . --gcov-options '\-lp' -e deps -e build -e example -e tests -e scripts
+  - coveralls --gcov-options '\-lp' -e deps -e example -e tests -e scripts

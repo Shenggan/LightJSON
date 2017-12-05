@@ -12,7 +12,7 @@ SET(LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib" CACHE STRING "Directory where 
 SET(DOC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/share/doc/${PROJECT_NAME}" CACHE PATH "Path to the documentation")
 
 set(CMAKE_CXX_FLAGS "--std=c++11 -g -Wall")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ") # enabling coverage
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage") # enabling coverage
 
 # force static runtime libraries for msvc builds
 if(MSVC)
@@ -73,7 +73,7 @@ if (test)
 
   # You can also omit NAME and COMMAND. The second argument could be some other
   # test executable.
-  add_test(that-other-test-I-made UnitTests)
+  add_test(UnitTests UnitTests)
 endif()
 
 install(FILES README.md README.en.md
