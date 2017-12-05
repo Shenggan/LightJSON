@@ -1,6 +1,6 @@
 # LightJSON: A Lightweight JSON CPP Library
 
-[![Build Status](https://travis-ci.com/Shenggan/LightJSON.svg?token=eMRNqxQT1YuqVS1nXpE5&branch=master)](https://travis-ci.com/Shenggan/LightJSON)
+[![Build Status](https://travis-ci.org/Shenggan/LightJSON.svg?branch=master)](https://travis-ci.org/Shenggan/LightJSON)
 [![Documentation Status](https://readthedocs.org/projects/lightjson/badge/?version=latest)](http://lightjson.readthedocs.io/en/latest/?badge=latest)
 ![Release version](https://img.shields.io/badge/release-v0.1.0-blue.svg)
 
