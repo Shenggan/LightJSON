@@ -145,6 +145,8 @@ typedef enum {
     LJSON_PARSE_MISS_COMMA_OR_CURLY_BRACKET
 } ljson_state;
 
+inline void ljson_init(ljson_value* v) { v->type = LJSON_NULL; }
+
 /*!
  * \brief the same as ljson_free(ljson_value* v)
  */

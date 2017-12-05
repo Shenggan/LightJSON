@@ -48,8 +48,6 @@ void ljson_free(ljson_value* v) {
     v->type = LJSON_NULL;
 }
 
-inline void ljson_init(ljson_value* v) { v->type = LJSON_NULL; }
-
 inline void expect_char(ljson_context* c, char ch) { 
     assert(*c->json == (ch));
     c->json++;
@@ -488,10 +486,10 @@ size_t getStringLength(const ljson_value& v) { return getStringLength(&v); };
 void setArray(ljson_value* v, const std::vector<ljson_value> & vec, bool deep_copy) {
     assert(v != nullptr);
     ljson_free(v);
-    v->data.marray = new std::vector<ljson_value>;
-    v->type = LJSON_ARRAY;
-    if (!deep_copy)
+    if (!deep_copy) {
+        v->data.marray = new std::vector<ljson_value>;
         v->data.marray->assign(vec.begin(), vec.end());
+    }
     else {
         size_t sz = vec.size();
         v->data.marray = new std::vector<ljson_value>(sz);
@@ -500,6 +498,7 @@ void setArray(ljson_value* v, const std::vector<ljson_value> & vec, bool deep_co
             ljson_reset(&((*v->data.marray)[i]), vec[i]);
         }
     }
+    v->type = LJSON_ARRAY;
 } 
 
 std::vector<ljson_value> & getArray(const ljson_value* v) {
@@ -524,7 +523,7 @@ size_t getArraySize(const ljson_value* v) {
     return v->data.marray->size();
 }
 
-void setArray(ljson_value & v, const std::vector<ljson_value> & vec, bool deep_copy) { setArray(v, vec, deep_copy); }
+void setArray(ljson_value & v, const std::vector<ljson_value> & vec, bool deep_copy) { setArray(&v, vec, deep_copy); }
 std::vector<ljson_value> & getArray(const ljson_value& v) { return getArray(v); }
 ljson_value & getArrayElement(const ljson_value & v, const size_t index) { return getArrayElement(&v, index); }
 void setArrayElement(ljson_value & v, const size_t index, const ljson_value & content) { setArrayElement(&v, index, content); }
