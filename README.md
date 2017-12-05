@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/Shenggan/LightJSON.svg?branch=master)](https://travis-ci.org/Shenggan/LightJSON)
 [![Documentation Status](https://readthedocs.org/projects/lightjson/badge/?version=latest)](http://lightjson.readthedocs.io/en/latest/?badge=latest)
+[![Coverage Status](https://coveralls.io/repos/github/Shenggan/LightJSON/badge.svg?branch=master)](https://coveralls.io/github/Shenggan/LightJSON?branch=master)
 ![Release version](https://img.shields.io/badge/release-v0.1.0-blue.svg)
 
 [English README](./README.en.md)
