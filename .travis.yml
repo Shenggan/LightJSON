@@ -8,4 +8,4 @@ script:
 
 after_success:
   - pip install --user cpp-coveralls
-  - coveralls -e deps -e tests -e example -e build/CMakeFiles --gcov-options '\-lp'
+  - coveralls -e deps -e tests -e example -E "build/CMakeFiles/3*" -E "build/CMakeFiles/*_tests*" --gcov-options '\-lp'
