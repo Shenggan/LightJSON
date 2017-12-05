@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <cassert>
 #include <streambuf>
 #include "lightjson.h"
 
@@ -25,12 +24,16 @@ int main() {
 	ljson::Value v = js["i"];
 	v.SetNumber(v.GetNumber() + 1);
 
+	ljson::Value v_t = js["t"];
+
 	ljson::Value v2 = js["a"];
 
 	ljson::Value v3 = js["o"];
 	v3["1"].SetString("20");
-	
+
+	v3["3"].SetValue(v_t);
 	v3["2"].SetValue(v3);
+	
 	v3["2"]["1"].SetBool(true);
 	v2[2].SetValue(v2);
 	std::cout << v2[2] << std::endl;
