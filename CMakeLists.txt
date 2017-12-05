@@ -7,11 +7,13 @@ option(test "Build all tests." OFF) # Makes boolean 'test' available.
 set(PROJECT_NAME LightJSON)
 project(${PROJECT_NAME})
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage") # enabling coverage
+
 SET(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
 SET(LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib" CACHE STRING "Directory where lib will install")
 SET(DOC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/share/doc/${PROJECT_NAME}" CACHE PATH "Path to the documentation")
 
-set(CMAKE_CXX_FLAGS "--std=c++11 -g -Wall -O2")
+set(CMAKE_CXX_FLAGS "--std=c++11 -g -Wall")
 
 # force static runtime libraries for msvc builds
 if(MSVC)

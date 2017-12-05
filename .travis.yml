@@ -2,11 +2,11 @@ sudo: required
 
 language: cpp
 compiler: gcc
-
+env: CONF=debug ARCH=x86 CXX11=ON GCOV_FLAGS='--coverage'
 script:
   - bash ./scripts/build.sh
   - bash ./scripts/test.sh
 
 after_success:
   - pip install --user cpp-coveralls
-  - coveralls -r .. --gcov-options '\-lp' -e deps -e example -e tests -e scripts
+  - coveralls -r . --gcov-options '\-lp' -e deps -e example -e tests -e scripts
