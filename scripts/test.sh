@@ -2,4 +2,10 @@
 
 cd build
 ./UnitTests
-./example
+cd ../example
+mkdir build
+cd build
+cmake ..
+make
+./c_style
+./class_style
